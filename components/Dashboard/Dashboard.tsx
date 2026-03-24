@@ -13,7 +13,7 @@ export default function Dashboard() {
     <div className="flex h-screen bg-neutral-950 text-white overflow-hidden">
       
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar onCreateClick={() => setOpen(true)} />
 
       {/* Main */}
       <div className="flex-1 p-6 overflow-y-auto relative">
@@ -39,7 +39,7 @@ export default function Dashboard() {
         <ContentList />
       </div>
 
-      {/* Modal OUTSIDE scroll container (IMPORTANT) */}
+      {/* Modal */}
       <CreateModal isOpen={open} onClose={() => setOpen(false)} />
     </div>
   );

@@ -5,13 +5,16 @@ import { Home, PlusCircle, FileText, Menu } from "lucide-react";
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 
-const Sidebar = () => {
+type Props = {
+  onCreateClick: () => void;
+};
+
+const Sidebar = ({ onCreateClick }: Props) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const pathname = usePathname();
 
   const menu = [
     { name: "Dashboard", icon: Home, path: "/" },
-    { name: "Create", icon: PlusCircle, path: "/create" },
     { name: "Content", icon: FileText, path: "/content" },
   ];
 
@@ -31,6 +34,8 @@ const Sidebar = () => {
 
       {/* Menu */}
       <div className="flex flex-col gap-3">
+
+        {/* Normal Links */}
         {menu.map((item) => {
           const isActive = pathname === item.path;
 
@@ -47,6 +52,16 @@ const Sidebar = () => {
             </Link>
           );
         })}
+
+        {/* Create Button (SPECIAL 🔥) */}
+        <button
+          onClick={onCreateClick}
+          className="flex items-center gap-3 p-2 rounded-xl hover:bg-neutral-800 transition cursor-pointer"
+        >
+          <PlusCircle />
+          {sidebarOpen && <span className="text-sm">Create</span>}
+        </button>
+
       </div>
     </div>
   )
