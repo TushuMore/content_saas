@@ -1,22 +1,34 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
+import { useState } from "react";
 import { Home, PlusCircle, FileText, Menu } from "lucide-react";
-import { usePathname } from 'next/navigation'
-import Link from 'next/link'
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 
 type Props = {
   onCreateClick: () => void;
+  isLoggedIn: boolean;
+  onAuthOpen: () => void;
 };
 
-const Sidebar = ({ onCreateClick }: Props) => {
+const Sidebar = ({ onCreateClick, isLoggedIn, onAuthOpen }: Props) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const pathname = usePathname();
+  const router = useRouter();
 
   const menu = [
     { name: "Dashboard", icon: Home, path: "/" },
     { name: "Content", icon: FileText, path: "/content" },
   ];
+
+  // 🔥 Navigation guard
+  const handleNavigation = (path: string) => {
+    if (!isLoggedIn) {
+      onAuthOpen(); // open login modal
+      return;
+    }
+    router.push(path);
+  };
 
   return (
     <div
@@ -34,37 +46,44 @@ const Sidebar = ({ onCreateClick }: Props) => {
 
       {/* Menu */}
       <div className="flex flex-col gap-3">
-
-        {/* Normal Links */}
         {menu.map((item) => {
           const isActive = pathname === item.path;
 
           return (
-            <Link
+            <button
               key={item.name}
-              href={item.path}
-              className={`flex items-center gap-3 p-2 rounded-xl transition cursor-pointer
-                ${isActive ? "bg-white text-black" : "hover:bg-neutral-800"}
+              onClick={() => handleNavigation(item.path)}
+              className={`flex items-center gap-3 p-2 rounded-xl transition text-left
+                ${
+                  isActive
+                    ? "bg-white text-black"
+                    : "hover:bg-neutral-800 text-gray-300"
+                }
               `}
             >
-              <item.icon />
-              {sidebarOpen && <span className="text-sm">{item.name}</span>}
-            </Link>
+              <item.icon size={20} />
+              {sidebarOpen && <span>{item.name}</span>}
+            </button>
           );
         })}
 
-        {/* Create Button (SPECIAL 🔥) */}
+        {/* Create Button */}
         <button
-          onClick={onCreateClick}
-          className="flex items-center gap-3 p-2 rounded-xl hover:bg-neutral-800 transition cursor-pointer"
+          onClick={() => {
+            if (!isLoggedIn) {
+              onAuthOpen();
+              return;
+            }
+            onCreateClick();
+          }}
+          className="flex items-center gap-3 p-2 rounded-xl bg-neutral-800 text-white hover:scale-105 transition mt-2"
         >
-          <PlusCircle />
-          {sidebarOpen && <span className="text-sm">Create</span>}
+          <PlusCircle size={20} />
+          {sidebarOpen && <span>Create</span>}
         </button>
-
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;
